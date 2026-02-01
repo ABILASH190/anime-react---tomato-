@@ -1,14 +1,10 @@
 import os
 import random
 from telegram import Update
-from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
+from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, CommandHandler, filters
 from keep_alive import keep_alive
-from telegram import Update
-from telegram.ext import CommandHandler, ApplicationBuilder, ContextTypes
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("👋 Hello! I am your Anime Reaction Bot! Use +commands to interact.")
-
+# ================= TOKEN =================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # ================= GIF DATABASE =================
@@ -130,12 +126,15 @@ async def reaction_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption = f"💥 {user} used **{command.upper()}** on {target}!"
         await context.bot.send_animation(msg.chat_id, gif, caption=caption)
 
+# ================= /start COMMAND =================
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "👋 Hello! I am Anime Reaction Bot!\nUse +commands to interact like +hug, +rasengan, +cry etc."
+    )
+
 # ================= START BOT =================
 keep_alive()
 app = ApplicationBuilder().token(BOT_TOKEN).build()
-app.add_handler(MessageHandler(filters.TEXT & filters.ChatType.GROUPS, reaction_handler))
-app.run_polling()
-# Add this line after creating your app
 app.add_handler(CommandHandler("start", start))
-
-
+app.add_handler(MessageHandler(filters.TEXT & (filters.ChatType.GROUPS | filters.ChatType.PRIVATE), reaction_handler))
+app.run_polling()
