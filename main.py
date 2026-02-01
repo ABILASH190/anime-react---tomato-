@@ -3,6 +3,11 @@ import random
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
 from keep_alive import keep_alive
+from telegram import Update
+from telegram.ext import CommandHandler, ApplicationBuilder, ContextTypes
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("👋 Hello! I am your Anime Reaction Bot! Use +commands to interact.")
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
@@ -130,3 +135,7 @@ keep_alive()
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 app.add_handler(MessageHandler(filters.TEXT & filters.ChatType.GROUPS, reaction_handler))
 app.run_polling()
+# Add this line after creating your app
+app.add_handler(CommandHandler("start", start))
+
+
